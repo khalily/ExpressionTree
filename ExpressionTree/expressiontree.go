@@ -2,13 +2,14 @@ package ExpressionTree
 
 import (
 	"expression-tree/stack"
-	// "fmt"
+	"fmt"
 	"regexp"
 	"strconv"
 )
 
 type Node interface {
 	Caculate() int
+	getName() string
 }
 
 type NumberNode struct {
@@ -18,6 +19,9 @@ type NumberNode struct {
 type BinaryTree interface {
 	setLeft(node Node)
 	setRight(node Node)
+	PrefixExpression() string
+	SuffixExpression() string
+	NifixExpression() string
 }
 
 type OperateNode struct {
@@ -26,16 +30,78 @@ type OperateNode struct {
 	right   Node
 }
 
-func (o *OperateNode) setLeft(node Node) {
-	o.left = node
+func (on OperateNode) getName() string {
+	return on.operate + " "
 }
 
-func (o *OperateNode) setRight(node Node) {
-	o.right = node
+func (on *OperateNode) setLeft(node Node) {
+	on.left = node
+}
+
+func (on *OperateNode) setRight(node Node) {
+	on.right = node
+}
+
+func (on OperateNode) PrefixExpression() string {
+	var leftExpression string
+	var rightExpression string
+	if leftNode, ok := on.left.(BinaryTree); ok {
+		leftExpression = leftNode.PrefixExpression()
+	} else {
+		leftExpression = on.left.getName()
+	}
+
+	if rightNode, ok := on.right.(BinaryTree); ok {
+		rightExpression = rightNode.PrefixExpression()
+	} else {
+		rightExpression = on.right.getName()
+	}
+	return fmt.Sprint(on.getName(), leftExpression, rightExpression)
+}
+
+func (on *OperateNode) SuffixExpression() string {
+	var leftExpression string
+	var rightExpression string
+	if leftNode, ok := on.left.(BinaryTree); ok {
+		leftExpression = leftNode.SuffixExpression()
+	} else {
+		leftExpression = on.left.getName()
+	}
+
+	if rightNode, ok := on.right.(BinaryTree); ok {
+		rightExpression = rightNode.SuffixExpression()
+	} else {
+		rightExpression = on.right.getName()
+	}
+
+	return fmt.Sprint(leftExpression, rightExpression, on.getName())
+}
+
+func (on OperateNode) NifixExpression() string {
+	var leftExpression string
+	var rightExpression string
+	if leftNode, ok := on.left.(BinaryTree); ok {
+		leftExpression = leftNode.NifixExpression()
+	} else {
+		leftExpression = on.left.getName()
+	}
+
+	if rightNode, ok := on.right.(BinaryTree); ok {
+		rightExpression = rightNode.NifixExpression()
+	} else {
+		rightExpression = on.right.getName()
+	}
+
+	return fmt.Sprint(leftExpression, on.getName(), rightExpression)
 }
 
 func (nn NumberNode) Caculate() int {
 	return nn.num
+}
+
+func (nn NumberNode) getName() string {
+	name := strconv.Itoa(nn.num)
+	return name + " "
 }
 
 func isOperate(s string) bool {

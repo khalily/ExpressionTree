@@ -120,17 +120,23 @@ func main() {
 	po["*"] = LEVEL2
 	po["/"] = LEVEL2
 
-	a := "1+23*1/123+(4 + 2 *5)"
+	a := "1 + 23 * 1 - 12 * (4 + 2 * 5)"
 
 	a = strings.Replace(a, " ", "", -1)
 	exps, err := parseExp(a)
 	if err != nil {
 		os.Exit(1)
 	}
-	fmt.Println(exps)
+	fmt.Println("Input Expression:\t", exps)
 	exps2 := pre2stuf(exps)
-	fmt.Println(exps2)
+	// fmt.Println(exps2)
 
 	root := ExpressionTree.CreateExpressionTree(exps2)
-	fmt.Println(root.Caculate())
+	fmt.Println("Caculate Result:\t", root.Caculate())
+
+	if btree, ok := root.(ExpressionTree.BinaryTree); ok {
+		fmt.Println("Prefix Expression:\t", btree.PrefixExpression())
+		fmt.Println("Nifix Expression:\t", btree.NifixExpression())
+		fmt.Println("Suffix Expression:\t", btree.SuffixExpression())
+	}
 }
